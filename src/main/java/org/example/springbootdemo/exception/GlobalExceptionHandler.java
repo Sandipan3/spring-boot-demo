@@ -1,6 +1,7 @@
 package org.example.springbootdemo.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -12,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler{
 
@@ -31,6 +33,8 @@ public class GlobalExceptionHandler{
                    errors.put(fieldName , message);
                });
 
+        log.error("[MethodArgumentNotValidException] : {}", ex.getMessage());
+
        return  ResponseEntity.badRequest().body(errors);
    }
 
@@ -46,6 +50,8 @@ public class GlobalExceptionHandler{
                 .path(request.getRequestURI())
                 .build();
 
+        log.error("[ResourceNotFoundException] : {}", ex.getMessage());
+
         return  ResponseEntity.status( HttpStatus.NOT_FOUND).body(error);
     }
 
@@ -59,6 +65,8 @@ public class GlobalExceptionHandler{
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build();
+
+        log.error("[DuplicateResourceException] : {}" , ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
     }
@@ -74,6 +82,8 @@ public class GlobalExceptionHandler{
                 .message(ex.getMessage())
                 .path(request.getRequestURI())
                 .build();
+
+        log.error("[Generic Exception] : {}",  ex.getMessage());
 
         return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
